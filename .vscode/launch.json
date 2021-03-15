@@ -8,9 +8,10 @@
       "name": "Cargo run",
       "type": "lldb",
       "request": "launch",
-      "cwd": "${workspaceFolder}",
-      "program": "${workspaceFolder}/hello-rust/target/debug/hello-rust",
+      "cwd": "${fileWorkspaceFolder}",
+      "program": "${fileWorkspaceFolder}/${relativeFileDirname}/../target/debug/${relativeFileDirname}/..",
       "args": [],
+      "preLaunchTask": "Rust: cargo build"
     }
   ]
 }
