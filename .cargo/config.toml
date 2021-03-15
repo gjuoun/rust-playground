@@ -1,2 +1,2 @@
 [alias]
-dev = "watch -d 1000 -x 'run'"
+dev = "watch -d 0.5 -x 'run'"
