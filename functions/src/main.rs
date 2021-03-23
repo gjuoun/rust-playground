@@ -5,7 +5,7 @@ fn main() {
     
     println!("{}",another_function(565));
 
-    let x = 5;
+    let _x = 5;
 
     let y = {
         let x = 3;
