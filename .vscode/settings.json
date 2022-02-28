@@ -1,8 +1,23 @@
 {
+  "liveServer.settings.multiRootWorkspaceName": "rust-playground",
   "workbench.colorCustomizations": {
-    "activityBar.background": "#5A0E33",
-    "titleBar.activeBackground": "#7D1348",
-    "titleBar.activeForeground": "#FEFCFD"
+    "activityBar.activeBackground": "#8743d7",
+    "activityBar.activeBorder": "#d88a47",
+    "activityBar.background": "#8743d7",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBar.inactiveForeground": "#e7e7e799",
+    "activityBarBadge.background": "#d88a47",
+    "activityBarBadge.foreground": "#15202b",
+    "sash.hoverBorder": "#8743d7",
+    "statusBar.background": "#6d29be",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#8743d7",
+    "statusBarItem.remoteBackground": "#6d29be",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "titleBar.activeBackground": "#6d29be",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#6d29be99",
+    "titleBar.inactiveForeground": "#e7e7e799"
   },
-  "liveServer.settings.multiRootWorkspaceName": "rust-playground"
+  "peacock.remoteColor": "#6d29be"
 }
