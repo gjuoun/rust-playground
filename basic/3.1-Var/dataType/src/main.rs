@@ -4,5 +4,6 @@ fn main() {
   // integers, floating-point numbers, Booleans, and characters.
 
   let num = 57u8;
+  
   println!("{}", num)
 }
