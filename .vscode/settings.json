@@ -1,5 +1,6 @@
 {
   "liveServer.settings.multiRootWorkspaceName": "rust-playground",
+  "peacock.remoteColor": "#6d29be",
   "workbench.colorCustomizations": {
     "activityBar.activeBackground": "#8743d7",
     "activityBar.activeBorder": "#d88a47",
@@ -19,5 +20,5 @@
     "titleBar.inactiveBackground": "#6d29be99",
     "titleBar.inactiveForeground": "#e7e7e799"
   },
-  "peacock.remoteColor": "#6d29be"
+  "peacock.color": "#42b883"
 }
