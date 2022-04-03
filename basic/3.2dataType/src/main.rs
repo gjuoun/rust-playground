@@ -5,4 +5,5 @@ fn main() {
 
   let num = 57u8;
   println!("{}", num)
+
 }
