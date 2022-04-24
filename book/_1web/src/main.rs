@@ -8,7 +8,11 @@ struct GcdParameters {
 }
 
 fn main() {
-    let server = HttpServer::new(|| App::new().route("/", web::get().to(get_index)));
+    let server = HttpServer::new(|| {
+        App::new()
+            .route("/", web::get().to(get_index))
+            .route("/gcd", web::post().to(post_gcd))
+    });
 
     println!("Listening on port 3000");
 
@@ -44,7 +48,7 @@ fn get_index() -> HttpResponse {
             <body>
                 <h1>GCD Calculator</h1>
                 <form action="/gcd" method="post">
-                    <input type="text" name="n"/>
+                    <input type="text" name="m"/>
                     <input type="text" name="n"/>
                     <button type="submit">Compute GCD</button>
                 </form>
