@@ -1,35 +1,38 @@
-use actix_web::{
-    body::BoxBody, http::header::ContentType, HttpRequest, HttpResponse, HttpServer, Responder,
-};
-use serde::Serialize;
+use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
+mod routes;
+use routes::user;
 
-#[derive(Serialize)]
-struct MyObj {
-    name: &'static str,
+#[get("/")]
+async fn hello() -> impl Responder {
+    HttpResponse::Ok().body("Hello world!")
 }
 
-// Responder
-impl Responder for MyObj {
-    type Body = BoxBody;
-
-    fn respond_to(self, _req: &HttpRequest) -> HttpResponse<Self::Body> {
-        let body = serde_json::to_string(&self).unwrap();
-
-        // Create response and set content type
-        HttpResponse::Ok()
-            .content_type(ContentType::json())
-            .body(body)
-    }
-}
-
-async fn index() -> impl Responder {
-    MyObj { name: "user" }
+#[post("/echo")]
+async fn echo(req_body: String) -> impl Responder {
+    HttpResponse::Ok().body(req_body)
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| actix_web::App::new().route("/", actix_web::web::get().to(index)))
-        .bind("127.0.0.1:8080")?
-        .run()
-        .await
+    let mut tls_builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
+    tls_builder
+        .set_private_key_file("./tls/key.pem", SslFiletype::PEM)
+        .unwrap();
+        tls_builder.set_certificate_chain_file("./tls/cert.pem").unwrap();
+
+
+    let server = HttpServer::new(|| {
+        App::new()
+            .service(hello)
+            .service(echo)
+            .service( user::get_router())
+        
+    })
+    // .bind_openssl(("127.0.0.1", 8080), tls_builder)?;
+    .bind(("127.0.0.1", 8080))?;
+    
+
+    println!("Listening on http://{}", server.addrs()[0]);
+    server.run().await
 }
