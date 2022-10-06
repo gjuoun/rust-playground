@@ -7,11 +7,9 @@ use axum::{
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct User {
-    id: u32,
-    name: String,
-}
+mod users_service;
+use users_service::User;
+
 
 pub fn user_router() -> Router {
     Router::new()
@@ -20,7 +18,11 @@ pub fn user_router() -> Router {
 }
 
 /// GET /users/:id
+<<<<<<< HEAD
 pub async fn get_one_user(Path(id): Path<String>) -> Json<Value> {
+=======
+pub async fn get_one_user(Path(id): Path<String>) -> Json<Vec<User>> {
+>>>>>>> fecd5d98dbf5bd85d59a3eaf355788a1d1d1bde3
     let users = vec![
         User {
             id: 1,
@@ -32,6 +34,7 @@ pub async fn get_one_user(Path(id): Path<String>) -> Json<Value> {
         },
     ];
 
+<<<<<<< HEAD
     let user = users
         .iter()
         .find(|&x| x.id.to_string() == id)
@@ -60,3 +63,25 @@ pub async fn get_all_users() -> Json<Value> {
 pub async fn create_user(Json(user): Json<User>) -> Json<Value> {
     Json(json!(user))
 }
+=======
+    let user = users.iter().find(|&x| x.id.to_string() == id).expect("User not found");
+    
+    // Json(json!(user))
+    Json(users)
+}
+
+/// /users/
+pub async fn get_all_users() -> Json<Vec<User>>{
+    let users = vec![
+        User { id: 1, name: "foo".to_owned() }, 
+        User { id: 2, name: "bar".into() }
+    ];
+    
+    Json(users)
+}
+
+pub async fn create_user(Json(user): Json<User>) ->Json<User> {
+    let user = users_service::create_user(user);
+    Json(user)
+}
+>>>>>>> fecd5d98dbf5bd85d59a3eaf355788a1d1d1bde3
