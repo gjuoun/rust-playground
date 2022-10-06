@@ -1,37 +1,15 @@
-use tokio::net::{TcpListener, TcpStream};
-use mini_redis::{Connection, Frame};
+use tokio::task::yield_now;
+use std::rc::Rc;
 
 #[tokio::main]
 async fn main() {
-    // // Bind the listener to the address
-    // let listener = TcpListener::bind("127.0.0.1:6379").await.unwrap();
+    tokio::spawn(async {
+        
+        let rc = Rc::new("hello");
+        println!("{}", rc);
+        // `rc` is used after `.await`. It must be persisted to
+        // the task's state.
+        yield_now().await;
 
-    // loop {
-    //     let (socket, _) = listener.accept().await.unwrap();
-    //     // A new task is spawned for each inbound socket. The socket is
-    //     // moved to the new task and processed there.
-    //     let _handle = tokio::spawn(async move {
-    //         process(socket).await;
-    //     });
-    // }
-
-    let v = vec![1, 2, 3];
-
-    tokio::spawn(async move {
-        println!("Here's a vec: {:?}", v);
     });
-}
-
-async fn process(socket: TcpStream) {
-    // The `Connection` lets us read/write redis **frames** instead of
-    // byte streams. The `Connection` type is defined by mini-redis.
-    let mut connection = Connection::new(socket);
-
-    if let Some(frame) = connection.read_frame().await.unwrap() {
-        println!("GOT: {:?}", frame);
-
-        // Respond with an error
-        let response = Frame::Error("unimplemented".to_string());
-        connection.write_frame(&response).await.unwrap();
-    }
 }
