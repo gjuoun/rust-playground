@@ -4,17 +4,9 @@ use axum::{response::Html, routing::get, Router};
 
 #[tokio::main]
 async fn main() {
-    let users_router = Router::new()
-        .route(
-            "/",
-            get(router::users::get_all_users)
-            .post(router::users::create_user),
-        )
-        .route("/:id", get(router::users::get_one_user));
-
     // build our application with a single route
     let app = Router::new()
-        .nest("/users", users_router)
+        .nest("/users", router::users::user_router())
         .route("/health", get(|| async { Html("ok") }));
 
     println!("Listening on http://localhost:3000");
