@@ -4,6 +4,7 @@ use axum::{response::Html, routing::get, Router};
 
 #[tokio::main]
 async fn main() {
+
     let users_router = Router::new()
         .route(
             "/",
