@@ -3,6 +3,12 @@ use tokio::net::{TcpListener, TcpStream};
 
 #[tokio::main]
 async fn main() {
+    // slicing a Vec
+    let vec = vec![1, 2, 3];
+    let int_slice = &vec[..]; // &[i32]
+
+    let mut x = [1, 2, 3];
+    let x = &mut x[..]; // &mut [i32]
     // Bind the listener to the address
     let listener = TcpListener::bind("127.0.0.1:6379").await.unwrap();
 
