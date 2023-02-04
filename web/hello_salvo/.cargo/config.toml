@@ -1,0 +1,2 @@
+[alias]
+dev = "watch -d 0.5 -x 'run' -q" #enable 'cargo dev'
