@@ -1,0 +1,15 @@
+{
+  "url": "http://localhost:3030/math/3/times/4",
+  "method": "GET",
+}
+
+###
+
+{
+  "url": "http://localhost:3030/math/sum/3/4"
+}
+
+###
+{
+  "url": "http://localhost:3030/hello/jun"
+}
