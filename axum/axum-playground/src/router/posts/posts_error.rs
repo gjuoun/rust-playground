@@ -1,23 +1,11 @@
 use axum::{
     response::{IntoResponse, Response},
-    routing::get,
-    Json, Router,
+    Json,
 };
 use hyper::StatusCode;
-use serde_json::{json, Value};
+use serde_json::json;
 
-pub fn routes() -> Router {
-    let router = Router::new().route("/", get(get_hello));
-    router
-}
-
-async fn get_hello() -> Result<Json<Value>, PostError> {
-    let res = reqwest::get("https://jsonplaceholder.typicode.com/").await?;
-    let body = res.json::<Value>().await?;
-    Ok(Json(body))
-}
-
-struct PostError(reqwest::Error);
+pub struct PostError(reqwest::Error);
 
 // Tell axum how to convert `AppError` into a response.
 impl IntoResponse for PostError {
