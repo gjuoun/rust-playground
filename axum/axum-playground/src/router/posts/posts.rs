@@ -1,4 +1,4 @@
-use super::{post_type::Post, posts_error::PostError};
+use super::{posts_type::Post, posts_error::PostError};
 use axum::{routing::get, Json, Router};
 use serde_json::{json, Value};
 

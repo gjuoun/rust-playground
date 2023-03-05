@@ -1,6 +1,6 @@
 use axum::{routing::get, Router};
 
-use playground::router::{hello, posts, users};
+use playground::router::{comments, hello, posts, users};
 
 #[tokio::main]
 async fn main() {
@@ -9,7 +9,8 @@ async fn main() {
         .route("/", get(|| async { "Hello, World!" }))
         .nest("/hello", hello::routes())
         .nest("/posts", posts::posts::routes())
-        .nest("/users", users::routes());
+        .nest("/users", users::routes())
+        .nest("/comments", comments::comments::routes());
 
     // run it with hyper on localhost:3000
     axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
