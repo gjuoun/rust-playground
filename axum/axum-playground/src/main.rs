@@ -1,6 +1,5 @@
 use axum::{routing::get, Router};
 
-use playground::router::{comments, hello, posts, users};
 use playground::router::{comments::comments, hello, posts::posts, users};
 use tower::ServiceBuilder;
 use tower_http::{
@@ -19,10 +18,6 @@ async fn main() {
     let app = Router::new()
         .route("/", get(|| async { "Hello, World!" }))
         .nest("/hello", hello::routes())
-        .nest("/posts", posts::posts::routes())
-        .nest("/users", users::routes())
-        .nest("/comments", comments::comments::routes());
-
         .nest("/posts", posts::routes())
         .nest("/users", users::routes())
         .nest("/comments", comments::routes())
