@@ -1,16 +1,17 @@
 use axum::{routing::get, Router};
-use hyper::StatusCode;
+use hyper::{HeaderMap, StatusCode};
 use tower::ServiceBuilder;
 use tower_http::trace::TraceLayer;
+use tracing::log::warn;
 
-/** This is a middleware practice */
 pub fn routes() -> Router {
-    let router = Router::new()
-        .route("/", get(get_comments))
-        .layer(ServiceBuilder::new().layer(TraceLayer::new_for_http()));
+    let router = Router::new().route("/", get(get_hello));
     router
 }
-async fn get_comments() -> &'static str {
+async fn get_hello(headers: HeaderMap) -> &'static str {
+    let header = headers.get("X-jun").unwrap();
+    let message = header.to_str().unwrap();
+    warn!("header: {}", message);
     "hello it's comments".into()
 }
 
