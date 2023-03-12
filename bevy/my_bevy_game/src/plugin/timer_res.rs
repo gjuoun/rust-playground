@@ -9,5 +9,3 @@ use super::{Name, Person};
 #[derive(Resource)]
 pub struct GreetTimer(pub Timer);
 
-
-
