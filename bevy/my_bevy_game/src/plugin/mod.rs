@@ -1,6 +1,4 @@
-use bevy::prelude::*;
-
-// use my_bevy_game::plugin::HelloPlugin;
+use bevy::prelude::{App, Commands, Component, Plugin, Query, With};
 
 #[derive(Component)]
 struct Person;
@@ -33,11 +31,4 @@ fn greet_people(query: Query<&Name, With<Person>>) {
     for name in &query {
         println!("hello {}!", name.0);
     }
-}
-
-fn main() {
-    App::new()
-        // .add_plugins(DefaultPlugins)
-        .add_plugins(HelloPlugin)
-        .run();
 }
