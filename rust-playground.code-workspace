@@ -2,6 +2,10 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{	
+			"name": "rust_example",
+			"path": "./rust_example"
 		}
 	],
 	"settings": {
