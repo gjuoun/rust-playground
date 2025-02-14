@@ -3,6 +3,10 @@
 // 2. error
 // 3. result
 // 4. option
+// 5. try
+// 6, custom error
+// add examples for 5, and 6 , ai!
+
 
 fn get_element_at_index(v: &[i32], index: usize) -> Option<i32> {
     if index < v.len() {
@@ -79,7 +83,7 @@ fn custom_error_example() {
 fn panic_example() {
     let v = vec![1, 2, 3];
     // This will panic
-    let _x = v[10];
+    // let _x = v[10];
 }
 
 fn parse_number(s: &str) -> Result<i32, ParseIntError> {
