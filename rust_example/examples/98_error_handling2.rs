@@ -6,7 +6,7 @@
 // 5. try
 // 6, custom error
 
-
+// region option_example
 fn get_element_at_index(v: &[i32], index: usize) -> Option<i32> {
     if index < v.len() {
         Some(v[index])
@@ -22,7 +22,9 @@ fn option_example() {
         None => println!("Index out of bounds"),
     }
 }
+// endregion option_example
 
+// region try_example
 // 5. try
 use std::num::ParseIntError;
 
@@ -40,8 +42,9 @@ fn try_example() {
         Err(e) => println!("Error: {}", e),
     }
 }
+// endregion try_example
 
-// 6, custom error
+// region custom error
 use std::error::Error;
 use std::fmt;
 
@@ -78,6 +81,9 @@ fn custom_error_example() {
         Err(e) => println!("Custom error: {}", e),
     }
 }
+// endregion custom error
+
+// region panic_example
 
 fn panic_example() {
     let v = vec![1, 2, 3];
@@ -85,6 +91,9 @@ fn panic_example() {
     // let _x = v[10];
 }
 
+// endregion panic_example
+
+// region result_example
 fn parse_number(s: &str) -> Result<i32, ParseIntError> {
     s.parse::<i32>()
 }
@@ -96,6 +105,8 @@ fn result_example() {
         Err(e) => println!("Error parsing number: {}", e),
     }
 }
+
+// endregion result_example
 
 fn main() {
     println!("Panic example:");

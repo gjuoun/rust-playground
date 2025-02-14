@@ -17,9 +17,17 @@ async fn main() {
         email: String::from("john@example.com"),
     };
 
-    // Serialize to JSON
-    let json = serde_json::to_string_pretty(&user).unwrap();
-    println!("Serialized JSON:\n{}", json);
+    // Serialize to JSON with error handling and store the result
+    let json = match serde_json::to_string_pretty(&user) {
+        Ok(j) => j,
+        Err(e) => {
+            eprintln!("Error serializing JSON: {}", e);
+            return;
+        }
+    };
+
+    // Now we can use json here
+    println!("\nJSON length: {}", json.len());
 
     // Simulate async operation
     process_user(&user).await;
