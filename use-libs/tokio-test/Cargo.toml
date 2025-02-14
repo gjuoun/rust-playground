@@ -1,8 +1,0 @@
-[package]
-edition = "2021"
-name = "tokio-test"
-version = "0.1.0"
-
-[dependencies]
-mini-redis = "0.4"
-tokio = {version = "1", features = ["full"]}
