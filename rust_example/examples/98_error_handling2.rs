@@ -75,3 +75,38 @@ fn custom_error_example() {
         Err(e) => println!("Custom error: {}", e),
     }
 }
+
+fn panic_example() {
+    let v = vec![1, 2, 3];
+    // This will panic
+    let _x = v[10];
+}
+
+fn parse_number(s: &str) -> Result<i32, ParseIntError> {
+    s.parse::<i32>()
+}
+
+fn result_example() {
+    let num_str = "123";
+    match parse_number(num_str) {
+        Ok(num) => println!("Parsed number: {}", num),
+        Err(e) => println!("Error parsing number: {}", e),
+    }
+}
+
+fn main() {
+    println!("Panic example:");
+    panic_example();
+
+    println!("\nResult example:");
+    result_example();
+
+    println!("\nOption example:");
+    option_example();
+
+    println!("\nTry example:");
+    try_example();
+
+    println!("\nCustom error example:");
+    custom_error_example();
+}
