@@ -5,7 +5,6 @@
 // 4. option
 // 5. try
 // 6, custom error
-// add examples for 5, and 6 , ai!
 
 
 fn get_element_at_index(v: &[i32], index: usize) -> Option<i32> {
