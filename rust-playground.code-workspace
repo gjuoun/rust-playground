@@ -3,7 +3,7 @@
 		{
 			"path": "."
 		},
-		{	
+		{
 			"name": "rust_example",
 			"path": "./rust_example"
 		}
@@ -30,5 +30,9 @@
 			"commandCenter.border": "#15202b99"
 		},
 		"peacock.color": "#42b883"
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": []
 	}
 }

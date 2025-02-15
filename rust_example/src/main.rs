@@ -1,40 +1,43 @@
-use anyhow::{Context, Result};
+mod error;
+use error::AppError;
 use garde::Validate;
-use reqwest;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
-#[derive(Debug, Deserialize, Serialize, Validate)]
+#[derive(Debug, Deserialize, Validate)]
 #[garde(allow_unvalidated)]
 struct Todo {
-    id: i32,
+    #[serde(rename = "userId")]
+    user_id: u32,
+    id: u32,
 
     #[garde(length(max = 15))]
     title: String,
-
     completed: bool,
-
-    #[serde(rename = "userId")]
-    user_id: i32,
 }
 
 #[tokio::main]
-async fn main() -> Result<()> {
-    fetch_todo().await.context("Failed to fetch todo")?;
-
-    Ok(())
+async fn main() {
+    match fetch_todo(&reqwest::Client::new()).await {
+        Ok(todo) => println!("Successfully fetched todo: {:?}", todo),
+        Err(err) => eprintln!("{}", err),
+    }
 }
 
-async fn fetch_todo() -> Result<Todo> {
-    let client = reqwest::Client::new();
-    let res = client
+async fn fetch_todo(client: &reqwest::Client) -> Result<Todo, AppError> {
+    let response = client
         .get("https://jsonplaceholder.typicode.com/todos/1")
         .send()
-        .await
-        .context("Failed to make request")?;
+        .await?; // Error automatically converted via From trait
 
-    let todo: Todo = res.json().await.context("Failed to parse JSON")?;
+    let status = response.status();
+    if !status.is_success() {
+        return Err(AppError::HttpStatus { status });
+    }
 
-    todo.validate().context("Validation failed")?;
+    let todo: Todo = response.json().await?; // JSON errors auto-converted
+
+    // Validate the todo
+    todo.validate()?; // Validation errors converted via From trait
 
     Ok(todo)
 }
