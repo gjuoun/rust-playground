@@ -25,7 +25,7 @@ pub enum AppError {
     },
 }
 
-// Implement conversion from garde::Report
+// Implement conversion from garde::Report (data validation error)
 impl From<garde::Report> for AppError {
     fn from(report: garde::Report) -> Self {
         let errors = report
