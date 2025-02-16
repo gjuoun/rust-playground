@@ -1,30 +1,27 @@
-use std::time::Duration;
-
-use futures::stream::{self, StreamExt, TryStreamExt};
-use garde::Validate;
-use internal::error::AppError;
+use futures::stream::{self, StreamExt};
+use reqwest::Client;
 use serde::Deserialize;
+use std::time::Duration;
 use tokio::time::Instant;
 
-#[derive(Debug, Deserialize, Validate)]
-#[garde(allow_unvalidated)]
+#[derive(Debug, Deserialize)]
 struct Todo {
-    #[serde(rename = "userId")]
     user_id: u32,
     id: u32,
     title: String,
     completed: bool,
 }
 
-async fn fetch_todos() -> Result<Vec<Todo>, AppError> {
-    let client = reqwest::Client::builder()
+async fn fetch_todos() -> Vec<Result<Todo, reqwest::Error>> {
+    let client = Client::builder()
         .pool_max_idle_per_host(20)
         .timeout(Duration::from_secs(15))
-        .build()?;
+        .build()
+        .expect("Failed to build client");
 
     let start = Instant::now();
 
-    let todos: Vec<Todo> = stream::iter(1..=100)
+    let todos: Vec<Result<Todo, reqwest::Error>> = stream::iter(1..=100)
         .map(|id| {
             let client = client.clone();
             async move {
@@ -39,19 +36,20 @@ async fn fetch_todos() -> Result<Vec<Todo>, AppError> {
             }
         })
         .buffer_unordered(20)
-        // may throw error immediately
-        .try_collect::<Vec<Todo>>()
-        .await?;
+        .collect()
+        .await;
 
     let duration = start.elapsed();
-
     println!("Fetched in {:?}", duration);
-    Ok(todos)
+
+    todos
 }
 
 #[tokio::main]
-async fn main() -> Result<(), AppError> {
-    let todos = fetch_todos().await?;
-    println!("Successfully fetched {} todos", todos.len());
-    Ok(())
+async fn main() {
+    let todos = fetch_todos().await;
+    let (successes, failures): (Vec<_>, Vec<_>) = todos.into_iter().partition(Result::is_ok);
+
+    println!("Successfully fetched {} todos", successes.len());
+    println!("Failed to fetch {} todos", failures.len());
 }
