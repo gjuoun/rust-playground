@@ -3,3 +3,4 @@
 3. I am a professional developer, experience with Typescript
 4. Show Typescript example for helping me understand Rust
 5. Always write the most efficient and elegant code
+6. If asked to make a practice file, follow the file name convention: `src/bin/<number>_<topic>_<subtopic>.rs`
