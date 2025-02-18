@@ -14,14 +14,20 @@ fn main() {
     let rect_ref2 = &rect;
 
     // Access data via immutable references
-    println!("Rectangle dimensions: width = {}, height = {}", rect_ref1.width, rect_ref2.height);
+    println!(
+        "Rectangle dimensions: width = {}, height = {}",
+        rect_ref1.width, rect_ref2.height
+    );
 
     // Error! Can't borrow `rect` as mutable because it's currently borrowed as immutable.
     // let rect_mut_ref = &mut rect;
     // TODO ^ Try uncommenting this line
 
     // Use the immutable references again
-    println!("Rectangle dimensions: width = {}, height = {}", rect_ref1.width, rect_ref2.height);
+    println!(
+        "Rectangle dimensions: width = {}, height = {}",
+        rect_ref1.width, rect_ref2.height
+    );
 
     // The immutable references are no longer used, so we can borrow mutably
     let rect_mut_ref = &mut rect;
@@ -39,9 +45,15 @@ fn main() {
     // TODO ^ Try uncommenting this line
 
     // Print using the mutable reference
-    println!("Rectangle dimensions: width = {}, height = {}", rect_mut_ref.width, rect_mut_ref.height);
+    println!(
+        "Rectangle dimensions: width = {}, height = {}",
+        rect_mut_ref.width, rect_mut_ref.height
+    );
 
     // The mutable reference is no longer used, so we can borrow immutably again
     let new_rect_ref = &rect;
-    println!("Rectangle dimensions: width = {}, height = {}", new_rect_ref.width, new_rect_ref.height);
+    println!(
+        "Rectangle dimensions: width = {}, height = {}",
+        new_rect_ref.width, new_rect_ref.height
+    );
 }

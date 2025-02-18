@@ -38,7 +38,8 @@ fn main() {
     
     // Borrow a mutable object as mutable
     new_edition(&mut mutabook);
-    
+    println!("mutabook = {:?}", mutabook.author);
+
     // Error! Cannot borrow an immutable object as mutable
     // new_edition(&mut immutabook);
 }
