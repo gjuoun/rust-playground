@@ -6,6 +6,14 @@
 		{
 			"name": "rust_example",
 			"path": "./rust_example"
+		},
+		{
+			"name": "blog_example",
+			"path": "./blog_example"
+		},
+		{
+			"name": "lambda_function",
+			"path": "./lambda_function"
 		}
 	],
 	"settings": {

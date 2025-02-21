@@ -1,0 +1,21 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Lambda Function",
+            "type": "shell",
+            "command": "cargo lambda build ${input:functionName}",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ],
+    "inputs": [
+        {
+            "id": "functionName",
+            "type": "promptString",
+            "description": "Enter the function name:"
+        }
+    ]
+}

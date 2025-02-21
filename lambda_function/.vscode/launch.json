@@ -1,0 +1,68 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug executable 'lambda_function'",
+			"cargo": {
+				"args": ["build", "--bin=lambda_function", "--package=lambda_function"],
+				"filter": {
+					"name": "lambda_function",
+					"kind": "bin"
+				}
+			},
+			// "envFile": ".env",
+			"env": {
+				"AWS_LAMBDA_FUNCTION_NAME": "_",
+				"AWS_LAMBDA_FUNCTION_VERSION": "1",
+				"AWS_LAMBDA_FUNCTION_MEMORY_SIZE": "4096",
+				"AWS_LAMBDA_RUNTIME_API": "http://[::]:9000/.rt",
+				"AWS_REGION": "us-east-1"
+			},
+			"args": [],
+			"cwd": "${workspaceFolder}"
+		},
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug unit tests in executable 'lambda_function'",
+			"cargo": {
+				"args": [
+					"test",
+					"--no-run",
+					"--bin=lambda_function",
+					"--package=lambda_function"
+				],
+				"filter": {
+					"name": "lambda_function",
+					"kind": "bin"
+				}
+			},
+			"args": [],
+			"cwd": "${workspaceFolder}"
+		},
+		{
+			"name": "Debug Lambda Function",
+			"type": "lldb",
+			"request": "launch",
+			"program": "${workspaceFolder}/target/release/lambda_function",
+			"args": [],
+			"env": {
+				"AWS_LAMBDA_FUNCTION_NAME": "_",
+				"AWS_LAMBDA_LOG_GROUP_NAME": "/aws/lambda/lambda_function",
+				"AWS_LAMBDA_LOG_STREAM_NAME": "2023/02/20/1/123456789012",
+				"AWS_EXECUTION_ENV": "AWS_Lambda_rust",
+				"AWS_REGION": "us-east-1",
+				"AWS_LAMBDA_FUNCTION_VERSION": "1",
+				"AWS_LAMBDA_FUNCTION_MEMORY_SIZE": "4096",
+				"AWS_LAMBDA_RUNTIME_API": "http://[::]:9000/.rt"
+			},
+			// "preLaunchTask": "Build Lambda Function",
+			"cwd": "${workspaceFolder}"
+		}
+	]
+}
