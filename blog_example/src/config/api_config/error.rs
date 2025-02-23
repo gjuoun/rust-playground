@@ -8,9 +8,9 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum AppError {
-    #[error("Resource not found: {0}")]
+    #[error("Not found: {0}")]
     NotFound(String),
-    #[error("Invalid input: {0}")]
+    #[error("Bad request: {0}")]
     BadRequest(String),
     #[error("Unauthorized: {0}")]
     Unauthorized(String),

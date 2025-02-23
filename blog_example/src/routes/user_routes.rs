@@ -31,7 +31,7 @@ async fn hello_world(
     Query(query): Query<HashMap<String, bool>>,
 ) -> Result<AppResponse<User>, AppError> {
     if let Some(true) = query.get("error") {
-        Err(AppError::BadRequest("Forced error triggered".into()))
+        Err(AppError::Forbidden("Forced error triggered".into()))
     } else {
         Ok(User {
             id: "user_123".to_owned(),
