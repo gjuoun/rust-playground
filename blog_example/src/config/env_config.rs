@@ -37,7 +37,7 @@ pub struct EnvConfig {
 impl Default for EnvConfig {
     fn default() -> Self {
         Self {
-            port: 3000,
+            port: 8088,
             host: "localhost".to_owned(),
             app_env: "development".to_owned(),
             braze_api_key: "".to_owned(), // empty string
