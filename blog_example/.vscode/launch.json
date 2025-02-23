@@ -1,0 +1,46 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "'blog_example' Debug",
+      "cargo": {
+        "args": [
+          "build",
+          "--bin=blog_example",
+          "--package=blog_example"
+        ],
+        "filter": {
+          "name": "blog_example",
+          "kind": "bin"
+        }
+      },
+      "envFile": ".env",
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "'blog_example' Unit test",
+      "cargo": {
+        "args": [
+          "test",
+          "--no-run",
+          "--bin=blog_example",
+          "--package=blog_example"
+        ],
+        "filter": {
+          "name": "blog_example",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
