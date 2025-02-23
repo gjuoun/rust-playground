@@ -2,8 +2,6 @@ use once_cell::sync::Lazy;
 use serde::Serialize;
 use std::time::{Duration, SystemTime};
 
-use crate::response::ApiResponse;
-
 static START_TIME: Lazy<SystemTime> = Lazy::new(SystemTime::now);
 
 #[derive(Debug, Serialize)]
@@ -13,6 +11,7 @@ pub struct HealthStatus {
     uptime_human: String,
 }
 
+/// GET /health
 pub fn get_health_status() -> HealthStatus {
     let uptime = START_TIME.elapsed().unwrap_or(Duration::from_secs(0));
     let uptime_seconds = uptime.as_secs();

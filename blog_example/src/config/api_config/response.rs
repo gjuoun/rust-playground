@@ -1,3 +1,4 @@
+use super::error::AppError;
 use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
@@ -18,9 +19,9 @@ pub struct ApiResponse<T> {
 }
 
 #[derive(Debug, Serialize)]
-pub struct ApiError {
+struct ApiError {
     message: String,
-    code: String,
+    status: u16,
 }
 
 impl<T> ApiResponse<T> {
@@ -33,13 +34,13 @@ impl<T> ApiResponse<T> {
         }
     }
 
-    pub fn error(message: impl Into<String>, code: impl Into<String>) -> ApiResponse<T> {
+    pub fn error(err: AppError) -> Self {
         Self {
             success: false,
             data: None,
             error: Some(ApiError {
-                message: message.into(),
-                code: code.into(),
+                message: err.to_string(),
+                status: err.status_code().as_u16(),
             }),
             request_id: generate_request_id(),
         }
@@ -48,19 +49,16 @@ impl<T> ApiResponse<T> {
 
 impl<T: Serialize> IntoResponse for ApiResponse<T> {
     fn into_response(self) -> Response {
-        let status_code = if self.success {
+        let status = if self.success {
             StatusCode::OK
         } else {
-            match self.error.as_ref().map(|e| e.code.as_str()) {
-                Some("not_found") => StatusCode::NOT_FOUND,
-                Some("bad_request") => StatusCode::BAD_REQUEST,
-                Some("unauthorized") => StatusCode::UNAUTHORIZED,
-                Some("forbidden") => StatusCode::FORBIDDEN,
-                _ => StatusCode::INTERNAL_SERVER_ERROR,
-            }
+            self.error
+                .as_ref()
+                .and_then(|e| StatusCode::from_u16(e.status).ok())
+                .unwrap_or(StatusCode::INTERNAL_SERVER_ERROR)
         };
 
-        (status_code, Json(self)).into_response()
+        (status, Json(self)).into_response()
     }
 }
 
