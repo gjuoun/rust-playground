@@ -1,38 +1,36 @@
 mod config;
-mod health;
 mod routes;
+mod service;
 
 use axum::Router;
-use config::EnvConfig;
-use routes::user_routes;
+use config::env_config::EnvConfig;
+use routes::todo_routes::todo_routes;
+use service::todo::TodoService;
+use sqlx::postgres::PgPoolOptions;
 
 #[tokio::main]
-async fn main() {
-    // Initialize environment configuration
-    if let Err(e) = EnvConfig::init() {
-        eprintln!("Failed to initialize config: {}", e);
-        std::process::exit(1);
-    }
-
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Load environment variables
+    EnvConfig::init()?;
     let config = EnvConfig::get_instance();
 
-    println!("Config: {:#?}", config);
+    // Create database connection pool
+    let pool = PgPoolOptions::new()
+        .max_connections(5)
+        .connect(&config.database_url)
+        .await?;
 
-    // Build our application with routes
-    let app = Router::new().merge(user_routes::create_router());
+    // Initialize TodoService
+    TodoService::init(pool.clone())?;
 
-    // Run it
-    let addr = format!("{}:{}", config.host, config.port);
-    let listener = tokio::net::TcpListener::bind(&addr)
-        .await
-        .unwrap_or_else(|e| {
-            eprintln!("Failed to bind to {}: {}", addr, e);
-            std::process::exit(1);
-        });
+    // Build application
+    let app = Router::new().merge(todo_routes());
 
-    println!("Server running on http://{}", addr);
-    axum::serve(listener, app).await.unwrap_or_else(|e| {
-        eprintln!("Server error: {}", e);
-        std::process::exit(1);
-    });
+    // Start server
+    let listener =
+        tokio::net::TcpListener::bind(format!("{}:{}", config.host, config.port)).await?;
+    println!("Server running on http://{}:{}", config.host, config.port);
+    axum::serve(listener, app).await?;
+
+    Ok(())
 }

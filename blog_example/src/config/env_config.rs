@@ -31,6 +31,9 @@ pub struct EnvConfig {
 
     #[garde(length(min = 1))]
     pub braze_api_key: String,
+
+    #[garde(length(min = 1))]
+    pub database_url: String,
 }
 
 // implement default trait
@@ -41,6 +44,7 @@ impl Default for EnvConfig {
             host: "localhost".to_owned(),
             app_env: "development".to_owned(),
             braze_api_key: "".to_owned(), // empty string
+            database_url: "".to_owned(),
         }
     }
 }
@@ -79,6 +83,7 @@ impl EnvConfig {
             host: Self::get_env_or_default("APP_HOST", defaults.host),
             app_env,
             braze_api_key: Self::get_env_or_default("APP_BRAZE_API_KEY", defaults.braze_api_key),
+            database_url: env::var("DATABASE_URL").unwrap_or_else(|_| defaults.database_url),
         };
 
         config.validate(&())?;

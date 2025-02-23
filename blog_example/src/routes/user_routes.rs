@@ -1,8 +1,8 @@
 use crate::config::api_config::{AppError, AppResponse};
-use crate::health::{get_health_status, HealthStatus};
+use crate::routes::health_routes::{get_health_status, HealthStatus};
+
 use axum::{
     extract::{Path, Query},
-    response::IntoResponse,
     routing::{get, post},
     Json, Router,
 };

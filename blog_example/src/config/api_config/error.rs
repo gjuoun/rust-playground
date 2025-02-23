@@ -4,6 +4,7 @@ use axum::{
     Json,
 };
 use serde_json::json;
+use sqlx::Error as SqlxError;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -18,6 +19,8 @@ pub enum AppError {
     Forbidden(String),
     #[error("Internal server error: {0}")]
     Internal(String),
+    #[error("Database error: {0}")]
+    Database(#[from] SqlxError),
 }
 
 impl AppError {
@@ -28,6 +31,7 @@ impl AppError {
             Self::Unauthorized(_) => StatusCode::UNAUTHORIZED,
             Self::Forbidden(_) => StatusCode::FORBIDDEN,
             Self::Internal(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::Database(_) => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 }
