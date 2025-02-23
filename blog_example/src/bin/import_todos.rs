@@ -5,7 +5,7 @@ use sqlx::PgPool;
 use std::fs;
 
 #[derive(Debug, Serialize, Deserialize)]
-struct Todo {
+struct Posts {
     id: i32,
     title: String,
     #[serde(rename = "userId")]
@@ -21,19 +21,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let config = EnvConfig::get_instance();
 
     // Read the JSON file
-    let json_content = fs::read_to_string("src/todos.json")?;
-    let todos: Vec<Todo> = serde_json::from_str(&json_content)?;
+    let json_content = fs::read_to_string("src/posts.json")?;
+    let posts: Vec<Posts> = serde_json::from_str(&json_content)?;
 
     // Connect to the database
     let pool = PgPool::connect(&config.database_url).await?;
 
-    println!("Found {} todos to import", todos.len());
+    println!("Found {} posts to import", posts.len());
 
     // Process in chunks of 25
-    for chunk in todos.chunks(25) {
-        let todos_data: (Vec<_>, Vec<_>, Vec<_>, Vec<_>) = chunk
+    for chunk in posts.chunks(25) {
+        let posts_data: (Vec<_>, Vec<_>, Vec<_>, Vec<_>) = chunk
             .iter()
-            .map(|todo| (todo.id, todo.title.clone(), todo.user_id, todo.body.clone()))
+            .map(|post| (post.id, post.title.clone(), post.user_id, post.body.clone()))
             .fold((vec![], vec![], vec![], vec![]), |mut acc, (a, b, c, d)| {
                 acc.0.push(a);
                 acc.1.push(b);
@@ -42,11 +42,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 acc
             });
 
-        let (ids, titles, user_ids, bodies) = todos_data;
+        let (ids, titles, user_ids, bodies) = posts_data;
 
         sqlx::query!(
             r#"
-            INSERT INTO todos (id, title, "userId", body)
+            INSERT INTO posts (id, title, "userId", body)
             SELECT * FROM UNNEST($1::int[], $2::text[], $3::int[], $4::text[])
             ON CONFLICT (id) DO UPDATE
             SET title = EXCLUDED.title,
@@ -61,7 +61,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .execute(&pool)
         .await?;
 
-        println!("Imported chunk of {} todos", chunk.len());
+        println!("Imported chunk of {} posts", chunk.len());
     }
 
     println!("Import completed successfully!");

@@ -1,45 +1,48 @@
-use chrono::NaiveDateTime;
 use once_cell::sync::OnceCell;
+use serde::Serialize;
 use sqlx::{Pool, Postgres};
-use uuid::Uuid;
 
 use crate::config::api_config::AppError;
 
-use super::todo_model::Todo;
+use super::post_model::Post;
 
-pub struct TodoService {
+pub struct PostService {
     pool: Pool<Postgres>,
 }
 
-static INSTANCE: OnceCell<TodoService> = OnceCell::new();
+static INSTANCE: OnceCell<PostService> = OnceCell::new();
 
-impl TodoService {
+#[derive(Serialize)]
+pub struct PaginatedPosts {
+    pub posts: Vec<Post>,
+    pub total_count: i64,
+    pub current_page: i64,
+    pub per_page: i64,
+    pub total_pages: i64,
+}
+
+impl PostService {
     pub fn init(pool: Pool<Postgres>) -> Result<(), String> {
         let service = Self { pool };
         INSTANCE
             .set(service)
-            .map_err(|_| "TodoService already initialized".to_string())
+            .map_err(|_| "PostService already initialized".to_string())
     }
 
-    pub fn get_instance() -> &'static TodoService {
-        INSTANCE.get().expect("TodoService not initialized")
+    pub fn get_instance() -> &'static PostService {
+        INSTANCE.get().expect("PostService not initialized")
     }
 
-    // Private constructor
-    fn new(pool: Pool<Postgres>) -> Self {
-        Self { pool }
-    }
-
-    pub async fn create_todo(
+    pub async fn create_post(
         &self,
         title: String,
         user_id: i32,
         body: String,
-    ) -> Result<Todo, AppError> {
+    ) -> Result<Post, AppError> {
         let result = sqlx::query_as!(
-            Todo,
+            Post,
             r#"
-            INSERT INTO todos (title, "userId", body)
+            INSERT INTO posts (title, "userId", body)
             VALUES ($1, $2, $3)
             RETURNING id, title, "userId" as user_id, body
             "#,
@@ -53,12 +56,12 @@ impl TodoService {
         Ok(result)
     }
 
-    pub async fn get_todo(&self, id: i32) -> Result<Option<Todo>, AppError> {
+    pub async fn get_post(&self, id: i32) -> Result<Option<Post>, AppError> {
         let result = sqlx::query_as!(
-            Todo,
+            Post,
             r#"
             SELECT id, title, "userId" as user_id, body
-            FROM todos
+            FROM posts
             WHERE id = $1
             "#,
             id
@@ -69,10 +72,10 @@ impl TodoService {
         Ok(result)
     }
 
-    pub async fn delete_todo(&self, id: i32) -> Result<Option<i32>, AppError> {
+    pub async fn delete_post(&self, id: i32) -> Result<Option<i32>, AppError> {
         let result = sqlx::query!(
             r#"
-            DELETE FROM todos
+            DELETE FROM posts
             WHERE id = $1
             RETURNING id
             "#,
@@ -84,16 +87,16 @@ impl TodoService {
         Ok(result.map(|r| r.id))
     }
 
-    pub async fn update_todo(
+    pub async fn update_post(
         &self,
         id: i32,
         title: Option<String>,
         body: Option<String>,
-    ) -> Result<Option<Todo>, AppError> {
+    ) -> Result<Option<Post>, AppError> {
         let result = sqlx::query_as!(
-            Todo,
+            Post,
             r#"
-            UPDATE todos
+            UPDATE posts
             SET title = COALESCE($1, title),
                 body = COALESCE($2, body)
             WHERE id = $3
@@ -109,13 +112,28 @@ impl TodoService {
         Ok(result)
     }
 
-    pub async fn list_todos(&self, page: i64, per_page: i64) -> Result<Vec<Todo>, AppError> {
+    pub async fn list_posts(&self, page: i64, per_page: i64) -> Result<PaginatedPosts, AppError> {
         let offset = (page - 1) * per_page;
-        let result = sqlx::query_as!(
-            Todo,
+
+        // Get total count first
+        let total_count = sqlx::query!(
+            r#"
+            SELECT COUNT(*) as count
+            FROM posts
+            "#
+        )
+        .fetch_one(&self.pool)
+        .await?
+        .count
+        .unwrap_or(0) as i64;
+
+        let total_pages = (total_count + per_page - 1) / per_page;
+
+        let posts = sqlx::query_as!(
+            Post,
             r#"
             SELECT id, title, "userId" as user_id, body
-            FROM todos
+            FROM posts
             ORDER BY id DESC
             LIMIT $1 OFFSET $2
             "#,
@@ -125,6 +143,12 @@ impl TodoService {
         .fetch_all(&self.pool)
         .await?;
 
-        Ok(result)
+        Ok(PaginatedPosts {
+            posts,
+            total_count,
+            current_page: page,
+            per_page,
+            total_pages,
+        })
     }
 }

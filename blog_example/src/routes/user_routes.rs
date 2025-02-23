@@ -79,7 +79,7 @@ async fn health_check() -> Result<AppResponse<HealthStatus>, AppError> {
     Ok(get_health_status().into())
 }
 
-pub fn create_router() -> Router {
+pub fn create_user_router() -> Router {
     let router = Router::new()
         .route("/", get(hello_world))
         .route("/users/:id", get(get_user_by_id))

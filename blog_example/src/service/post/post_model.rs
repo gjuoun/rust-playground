@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Todo {
+pub struct Post {
     pub id: i32,
     #[serde(default)]
     pub title: Option<String>,

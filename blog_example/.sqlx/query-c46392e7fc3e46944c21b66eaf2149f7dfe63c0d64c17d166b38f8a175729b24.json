@@ -1,0 +1,17 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO posts (id, title, \"userId\", body)\n            SELECT * FROM UNNEST($1::int[], $2::text[], $3::int[], $4::text[])\n            ON CONFLICT (id) DO UPDATE\n            SET title = EXCLUDED.title,\n                \"userId\" = EXCLUDED.\"userId\",\n                body = EXCLUDED.body\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int4Array",
+        "TextArray",
+        "Int4Array",
+        "TextArray"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "c46392e7fc3e46944c21b66eaf2149f7dfe63c0d64c17d166b38f8a175729b24"
+}

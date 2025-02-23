@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT id, title, \"userId\" as user_id, body\n            FROM todos\n            ORDER BY id DESC\n            LIMIT $1 OFFSET $2\n            ",
+  "query": "\n            UPDATE posts\n            SET title = COALESCE($1, title),\n                body = COALESCE($2, body)\n            WHERE id = $3\n            RETURNING id, title, \"userId\" as user_id, body\n            ",
   "describe": {
     "columns": [
       {
@@ -26,8 +26,9 @@
     ],
     "parameters": {
       "Left": [
-        "Int8",
-        "Int8"
+        "Text",
+        "Text",
+        "Int4"
       ]
     },
     "nullable": [
@@ -37,5 +38,5 @@
       true
     ]
   },
-  "hash": "e48c4f28a912157f41ce0b7dd2ad2546075befabe9d10b24fdcd6592fba61f2b"
+  "hash": "b72386cf0cce156772d4bb0ee5963eb61542beec3a069cc8bbaae9770226a944"
 }

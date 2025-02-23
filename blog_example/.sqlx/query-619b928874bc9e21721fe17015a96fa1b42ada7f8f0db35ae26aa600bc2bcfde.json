@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT id, title, \"userId\" as user_id, body\n            FROM todos\n            WHERE id = $1\n            ",
+  "query": "\n            INSERT INTO posts (title, \"userId\", body)\n            VALUES ($1, $2, $3)\n            RETURNING id, title, \"userId\" as user_id, body\n            ",
   "describe": {
     "columns": [
       {
@@ -26,7 +26,9 @@
     ],
     "parameters": {
       "Left": [
-        "Int4"
+        "Text",
+        "Int4",
+        "Text"
       ]
     },
     "nullable": [
@@ -36,5 +38,5 @@
       true
     ]
   },
-  "hash": "a07287224bed95ef0a32ca3bae593583b414c9818dbf269f4ad7541eef329705"
+  "hash": "619b928874bc9e21721fe17015a96fa1b42ada7f8f0db35ae26aa600bc2bcfde"
 }
