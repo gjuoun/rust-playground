@@ -14,6 +14,8 @@ async fn main() {
 
     let config = EnvConfig::get_instance();
 
+    println!("Config: {:#?}", config);
+
     // Build our application with routes
     let app = user_routes();
 

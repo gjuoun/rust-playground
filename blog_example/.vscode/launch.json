@@ -19,7 +19,10 @@
           "kind": "bin"
         }
       },
-      "envFile": ".env",
+      "env": {
+        "APP_ENV": "local"
+      },
+      "envFile": "${workspaceFolder}/.env",
       "args": [],
       "cwd": "${workspaceFolder}"
     },
