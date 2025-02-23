@@ -1,4 +1,4 @@
-use crate::config::api_config::{ApiResponse, AppError};
+use crate::config::api_config::{AppError, AppResponse};
 use crate::health::{get_health_status, HealthStatus};
 use axum::{
     extract::{Path, Query},
@@ -27,28 +27,32 @@ pub struct CreateUser {
 }
 
 /// GET /
-async fn hello_world(Query(query): Query<HashMap<String, bool>>) -> ApiResponse<User> {
+async fn hello_world(
+    Query(query): Query<HashMap<String, bool>>,
+) -> Result<AppResponse<User>, AppError> {
     if let Some(true) = query.get("error") {
-        ApiResponse::error(AppError::BadRequest("Forced error triggered".into()))
+        Err(AppError::BadRequest("Forced error triggered".into()))
     } else {
-        ApiResponse::success(User {
+        Ok(User {
             id: "user_123".to_owned(),
             username: "John Doe".to_owned(),
             email: "john@example.com".to_owned(),
-        })
+        }
+        .into())
     }
 }
 
 /// GET /users/:id
-async fn get_user_by_id(Path(user_id): Path<String>) -> ApiResponse<User> {
+async fn get_user_by_id(Path(user_id): Path<String>) -> Result<AppResponse<User>, AppError> {
     if user_id == "123" {
-        ApiResponse::success(User {
+        Ok(User {
             id: user_id,
             username: "John Doe".to_owned(),
             email: "john@example.com".to_owned(),
-        })
+        }
+        .into())
     } else {
-        ApiResponse::error(AppError::NotFound(format!(
+        Err(AppError::NotFound(format!(
             "User with ID {} not found",
             user_id
         )))
@@ -57,21 +61,22 @@ async fn get_user_by_id(Path(user_id): Path<String>) -> ApiResponse<User> {
 
 /// POST /users
 /// body: [`CreateUser`]
-async fn create_user(Json(payload): Json<CreateUser>) -> ApiResponse<User> {
+async fn create_user(Json(payload): Json<CreateUser>) -> Result<AppResponse<User>, AppError> {
     if payload.email.contains('@') {
-        ApiResponse::success(User {
+        Ok(User {
             id: "user_new".to_string(),
             username: payload.username,
             email: payload.email,
-        })
+        }
+        .into())
     } else {
-        ApiResponse::error(AppError::BadRequest("Invalid email format".into()))
+        Err(AppError::BadRequest("Invalid email format".into()))
     }
 }
 
 /// GET /health
-async fn health_check() -> ApiResponse<HealthStatus> {
-    ApiResponse::success(get_health_status())
+async fn health_check() -> Result<AppResponse<HealthStatus>, AppError> {
+    Ok(get_health_status().into())
 }
 
 pub fn create_router() -> Router {
