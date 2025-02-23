@@ -2,6 +2,7 @@ mod config;
 mod health;
 mod routes;
 
+use axum::Router;
 use config::EnvConfig;
 use routes::user_routes;
 
@@ -18,7 +19,7 @@ async fn main() {
     println!("Config: {:#?}", config);
 
     // Build our application with routes
-    let app = user_routes();
+    let app = Router::new().merge(user_routes::create_router());
 
     // Run it
     let addr = format!("{}:{}", config.host, config.port);

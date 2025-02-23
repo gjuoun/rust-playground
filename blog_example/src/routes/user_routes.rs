@@ -82,7 +82,7 @@ pub fn create_router() -> Router {
         .route("/health", get(health_check));
 
     // Print all registered routes
-    println!("\nRegistered routes:");
+    println!("\nRegistered user routes:");
     println!("  GET /");
     println!("  GET /users/:id");
     println!("  POST /users");
