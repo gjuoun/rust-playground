@@ -37,10 +37,19 @@
 			"titleBar.inactiveForeground": "#15202b99",
 			"commandCenter.border": "#15202b99"
 		},
-		"peacock.color": "#42b883"
+		"peacock.color": "#42b883",
 	},
 	"launch": {
 		"version": "0.2.0",
 		"configurations": []
+	},
+	"extensions": {
+		"recommendations": [
+			"rust-lang.rust-analyzer",
+			"serayuzgur.crates",
+			"tamasfe.even-better-toml",
+			"vadimcn.vscode-lldb"
+		],
+
 	}
 }
