@@ -4,8 +4,8 @@ mod service;
 
 use axum::Router;
 use config::env_config::EnvConfig;
-use routes::{post_routes::create_post_routes, user_routes::create_user_router};
-use service::post::PostService;
+use routes::{post_routes::create_post_routes, user_routes::create_user_routes};
+use service::{post::PostService, user::UserService};
 use sqlx::postgres::PgPoolOptions;
 
 #[tokio::main]
@@ -20,13 +20,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .connect(&config.database_url)
         .await?;
 
-    // Initialize TodoService
+    // Initialize Services
     PostService::init(pool.clone())?;
+    UserService::init(pool.clone())?;
 
     // Build application
     let app = Router::new()
         .merge(create_post_routes())
-        .merge(create_user_router());
+        .merge(create_user_routes());
 
     // Start server
     let listener =

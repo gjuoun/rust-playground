@@ -1,97 +1,54 @@
-use crate::config::api_config::{AppError, AppResponse};
-use crate::routes::health_routes::{get_health_status, HealthStatus};
-
 use axum::{
     extract::{Path, Query},
-    routing::{get, post},
-    Json, Router,
+    routing::get,
+    Router,
 };
-use garde::Validate;
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use serde::Deserialize;
 
-#[derive(Debug, Serialize, Validate)]
-pub struct User {
-    #[garde(skip)]
-    id: String,
-    #[garde(length(min = 3, max = 255))]
-    username: String,
-    #[garde(email)]
-    email: String,
-}
+use crate::config::api_config::{AppError, AppResponse};
+use crate::service::user::{PaginatedUsers, User, UserService};
 
 #[derive(Debug, Deserialize)]
-pub struct CreateUser {
-    username: String,
-    email: String,
+pub struct ListUsersQuery {
+    #[serde(default = "default_page")]
+    page: i64,
+    #[serde(default = "default_per_page")]
+    per_page: i64,
 }
 
-/// GET /
-async fn hello_world(
-    Query(query): Query<HashMap<String, bool>>,
-) -> Result<AppResponse<User>, AppError> {
-    if let Some(true) = query.get("error") {
-        Err(AppError::Forbidden("Forced error triggered".into()))
-    } else {
-        Ok(User {
-            id: "user_123".to_owned(),
-            username: "John Doe".to_owned(),
-            email: "john@example.com".to_owned(),
-        }
-        .into())
+fn default_page() -> i64 {
+    1
+}
+fn default_per_page() -> i64 {
+    10
+}
+
+async fn get_user(Path(id): Path<i32>) -> Result<AppResponse<User>, AppError> {
+    let service = UserService::get_instance();
+    match service.get_user(id).await {
+        Ok(Some(user)) => Ok(user.into()),
+        Ok(None) => Err(AppError::NotFound(format!("User with ID {} not found", id))),
+        Err(e) => Err(AppError::Internal(e.to_string())),
     }
 }
 
-/// GET /users/:id
-async fn get_user_by_id(Path(user_id): Path<String>) -> Result<AppResponse<User>, AppError> {
-    if user_id == "123" {
-        Ok(User {
-            id: user_id,
-            username: "John Doe".to_owned(),
-            email: "john@example.com".to_owned(),
-        }
-        .into())
-    } else {
-        Err(AppError::NotFound(format!(
-            "User with ID {} not found",
-            user_id
-        )))
-    }
+async fn list_users(
+    Query(query): Query<ListUsersQuery>,
+) -> Result<AppResponse<PaginatedUsers>, AppError> {
+    let service = UserService::get_instance();
+    let result = service.list_users(query.page, query.per_page).await?;
+
+    Ok(result.into())
 }
 
-/// POST /users
-/// body: [`CreateUser`]
-async fn create_user(Json(payload): Json<CreateUser>) -> Result<AppResponse<User>, AppError> {
-    if payload.email.contains('@') {
-        Ok(User {
-            id: "user_new".to_string(),
-            username: payload.username,
-            email: payload.email,
-        }
-        .into())
-    } else {
-        Err(AppError::BadRequest("Invalid email format".into()))
-    }
-}
-
-/// GET /health
-async fn health_check() -> Result<AppResponse<HealthStatus>, AppError> {
-    Ok(get_health_status().into())
-}
-
-pub fn create_user_router() -> Router {
+pub fn create_user_routes() -> Router {
     let router = Router::new()
-        .route("/", get(hello_world))
-        .route("/users/:id", get(get_user_by_id))
-        .route("/users", post(create_user))
-        .route("/health", get(health_check));
+        .route("/users", get(list_users))
+        .route("/users/:id", get(get_user));
 
-    // Print all registered routes
     println!("\nRegistered user routes:");
-    println!("  GET /");
-    println!("  GET /users/:id");
-    println!("  POST /users");
-    println!("  GET /health\n");
+    println!("  GET /users");
+    println!("  GET /users/:id\n");
 
     router
 }

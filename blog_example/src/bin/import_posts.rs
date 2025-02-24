@@ -1,5 +1,6 @@
 use blog_example::config::env_config::EnvConfig;
 use dotenv::dotenv;
+use reqwest;
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 use std::fs;
@@ -20,9 +21,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     EnvConfig::init()?;
     let config = EnvConfig::get_instance();
 
-    // Read the JSON file
-    let json_content = fs::read_to_string("src/posts.json")?;
-    let posts: Vec<Posts> = serde_json::from_str(&json_content)?;
+    // Fetch posts from the API
+    let posts: Vec<Posts> = reqwest::Client::new()
+        .get("https://jsonplaceholder.typicode.com/posts")
+        .send()
+        .await?
+        .json()
+        .await?;
 
     // Connect to the database
     let pool = PgPool::connect(&config.database_url).await?;
