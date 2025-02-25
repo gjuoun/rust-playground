@@ -35,11 +35,11 @@ fn main() {
     };
 
     let bob = alice; // Ownership moves to bob
-                     // println!("{:?}", alice); // This would error if uncommented
+                    //  println!("{:?}", alice); // This would error if uncommented
 
     // Example 2: Function parameter ownership
     let mut charlie = celebrate_birthday(bob);
-    // println!("{:?}", bob); // bob is no longer valid here
+    println!("{:?}", bob); // bob is no longer valid here
 
     // Example 3: Clone for explicit duplication
     let david = Person {

@@ -23,8 +23,50 @@ fn App() -> Element {
             },
         }
         DogApp { breed: breed.clone() }
+        Post {}
     }
 }
+
+#[component]
+fn Post() -> Element {
+    let mut post_text = use_signal(|| String::new());
+
+    rsx! {
+        div { id: "post-container",
+            h2 { "Create a Post" }
+            textarea {
+                id: "post-textarea",
+                placeholder: "Write your post here...",
+                value: post_text.clone(),
+                oninput: move |e| {
+                    post_text.set(e.value().to_string());
+                },
+                rows: "5",
+                cols: "40",
+            }
+            div {
+                p { "Preview:" }
+                div { id: "post-preview",
+                    if post_text.read().is_empty() {
+                        p { style: "color: gray;", "Your post will appear here..." }
+                    } else {
+                        p { "{post_text}" }
+                    }
+                }
+            }
+            button {
+                onclick: move |_| {
+                    if !post_text.read().is_empty() {
+                        tracing::info!("Post submitted: {}", *post_text.read());
+                        post_text.set("".into());
+                    }
+                },
+                "Submit Post"
+            }
+        }
+    }
+}
+
 #[derive(Props, PartialEq, Clone)]
 struct DogAppProps {
     breed: Signal<String>,
