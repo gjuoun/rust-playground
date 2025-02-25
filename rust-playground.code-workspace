@@ -14,6 +14,10 @@
 		{
 			"name": "lambda_function",
 			"path": "./lambda_function"
+		},
+		{
+			"name": "dioxus_playground",
+			"path": "./dioxus_playground"
 		}
 	],
 	"settings": {
