@@ -1,3 +1,4 @@
+use anyhow::{Context, Result};
 use dioxus::{logger::tracing, prelude::*};
 
 const FAVICON: Asset = asset!("/assets/favicon.ico");
@@ -10,86 +11,77 @@ fn main() {
 
 #[component]
 fn App() -> Element {
-    let mut breed = use_signal(|| "Labrador".into());
-
     rsx! {
         document::Link { rel: "icon", href: FAVICON }
         document::Link { rel: "stylesheet", href: MAIN_CSS }
-        // Hero {}
-        input {
-            value: breed.clone(),
-            oninput: move |e| {
-                breed.set(e.value().to_string());
-            },
-        }
-        DogApp { breed: breed.clone() }
-        Post {}
+
+        DogApp{}
     }
 }
 
-#[component]
-fn Post() -> Element {
-    let mut post_text = use_signal(|| String::new());
-
-    rsx! {
-        div { id: "post-container",
-            h2 { "Create a Post" }
-            textarea {
-                id: "post-textarea",
-                placeholder: "Write your post here...",
-                value: post_text.clone(),
-                oninput: move |e| {
-                    post_text.set(e.value().to_string());
-                },
-                rows: "5",
-                cols: "40",
-            }
-            div {
-                p { "Preview:" }
-                div { id: "post-preview",
-                    if post_text.read().is_empty() {
-                        p { style: "color: gray;", "Your post will appear here..." }
-                    } else {
-                        p { "{post_text}" }
-                    }
-                }
-            }
-            button {
-                onclick: move |_| {
-                    if !post_text.read().is_empty() {
-                        tracing::info!("Post submitted: {}", *post_text.read());
-                        post_text.set("".into());
-                    }
-                },
-                "Submit Post"
-            }
-        }
-    }
-}
-
-#[derive(Props, PartialEq, Clone)]
-struct DogAppProps {
-    breed: Signal<String>,
+#[derive(serde::Deserialize)]
+struct DogApi {
+    message: String,
 }
 
 #[component]
-fn DogApp(props: DogAppProps) -> Element {
-    let img_src = use_hook(|| "https://images.dog.ceo/breeds/pitbull/dog-3981540_1280.jpg");
+fn DogApp() -> Element {
+    // // State for the dog image URL
+    // let mut img_src = use_signal(|| String::new());
 
-    let skip = move |evt: MouseEvent| {
-        tracing::info!("skip");
+    // // Event handler for fetching a new dog image
+    // let fetch_new = move |_| async move {
+    //     // Local async function for fetching dog images
+    //     async fn fetch_dog_image() -> Result<String> {
+    //         let resp = reqwest::get("https://dog.ceo/api/breeds/image/random")
+    //             .await?
+    //             .error_for_status()?
+    //             .json::<DogApi>()
+    //             .await
+    //             .context("Failed to parse API response")?;
+
+    //         // Return the image URL
+    //         Ok(resp.message)
+    //     }
+
+    //     // Execute the fetch and handle the result
+    //     match fetch_dog_image().await {
+    //         Ok(image_url) => img_src.set(image_url),
+    //         Err(e) => {
+    //             tracing::error!("Error fetching dog image: {}", e);
+    //             img_src.set("".into());
+    //         }
+    //     }
+    // };
+
+    let mut img_src = use_resource(|| async move {
+        reqwest::get("https://dog.ceo/api/breeds/image/random")
+            .await
+            .unwrap()
+            .json::<DogApi>()
+            .await
+            .unwrap()
+            .message
+    });
+
+    // Event handlers for other buttons (currently just logging)
+    let skip = move |_| {
+        tracing::info!("Skip button clicked");
     };
-    let save = move |evt: MouseEvent| {
-        tracing::info!("save");
+
+    let save = move |_| {
+        tracing::info!("Save button clicked");
     };
 
     rsx! {
         div { id: "dogview",
-            img { src: "{img_src}", id: "dog" }
+            img { src: img_src.cloned().unwrap_or_default(), id: "dog" }
         }
+        button { id: "fetch", onclick: move |_| img_src.restart() , "fetch me!!!" }
         div { id: "buttons",
-            button { id: "skip", onclick: skip, "skip" }
-            button { id: "save", onclick: save, "save!" }
+        button { id: "skip", onclick: skip, "skip" }
+        button { id: "save", onclick: save, "save!" }
+        // button { id: "fetch", onclick: fetch_new, "fetch!" }
         }
     }
 }

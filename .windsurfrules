@@ -1,6 +1,6 @@
+### General Rules
 1. This is a Rust practice project
-2. Speak English or Chinese to me
-3. I am a professional developer, experience with Typescript
-4. Show Typescript example for helping me understand Rust
-5. Always write the most efficient and elegant code
-6. If asked to make a practice file, follow the file name convention: `src/bin/<number>_<topic>_<subtopic>.rs`
+2. I am a professional developer, experience with Typescript
+3. Always write the most efficient and elegant code
+4. Do not run any command without permission
+
