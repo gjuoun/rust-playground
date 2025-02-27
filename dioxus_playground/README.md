@@ -2,7 +2,8 @@
 
 This project uses Dioxus CLI
 
-see [usage](https://dioxuslabs.com/learn/0.6/getting_started/#)
+# Install Cli
+ [usage](https://dioxuslabs.com/learn/0.6/getting_started/#)
 
 # Cli usage
 
@@ -18,7 +19,9 @@ dx new {project_name}
 Run the following command in the root of your project to start developing with the default platform:
 
 ```bash
-dx serve
+dx serve # serve default feauture (web)
+
+dx serve --platform web # ["desktop", "mobile" ]
 ```
 
 To run for a different platform, use the `--platform platform` flag. E.g.

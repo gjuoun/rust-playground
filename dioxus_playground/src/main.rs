@@ -14,8 +14,7 @@ fn App() -> Element {
     rsx! {
         document::Link { rel: "icon", href: FAVICON }
         document::Link { rel: "stylesheet", href: MAIN_CSS }
-
-        DogApp{}
+        DogApp {}
     }
 }
 
@@ -77,30 +76,11 @@ fn DogApp() -> Element {
         div { id: "dogview",
             img { src: img_src.cloned().unwrap_or_default(), id: "dog" }
         }
-        button { id: "fetch", onclick: move |_| img_src.restart() , "fetch me!!!" }
+        button { id: "fetch", onclick: move |_| img_src.restart(), "fetch me!!!" }
         div { id: "buttons",
-        button { id: "skip", onclick: skip, "skip" }
-        button { id: "save", onclick: save, "save!" }
-        // button { id: "fetch", onclick: fetch_new, "fetch!" }
-        }
-    }
-}
-
-#[component]
-pub fn Hero() -> Element {
-    rsx! {
-        div { id: "hero",
-            img { src: HEADER_SVG, id: "header" }
-            div { id: "links",
-                a { href: "https://dioxuslabs.com/learn/0.6/", "📚 Learn Dioxus" }
-                a { href: "https://dioxuslabs.com/awesome", "🚀 Awesome Dioxus" }
-                a { href: "https://github.com/dioxus-community/", "📡 Community Libraries" }
-                a { href: "https://github.com/DioxusLabs/sdk", "⚙️ Dioxus Development Kit" }
-                a { href: "https://marketplace.visualstudio.com/items?itemName=DioxusLabs.dioxus",
-                    "💫 VSCode Extension"
-                }
-                a { href: "https://discord.gg/XgGxMSkvUM", "👋 Community Discord" }
-            }
+            button { id: "skip", onclick: skip, "skip" }
+            button { id: "save", onclick: save, "save!" }
+                // button { id: "fetch", onclick: fetch_new, "fetch!" }
         }
     }
 }
