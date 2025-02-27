@@ -12,14 +12,14 @@ chrono = "0.4.35"
 dioxus = { version = "0.6.0", features = ["fullstack"] }
 reqwest = { version = "0.12.12", features = ["json"] }
 serde = { version = "1.0.218", features = ["derive"] }
-tokio = { version = "1.36.0", features = ["time"] }
+tokio = { version = "1.36.0", features = ["time"], optional = true }
 
 [features]
 default = []
 web = ["dioxus/web"]
 desktop = ["dioxus/desktop"]
 mobile = ["dioxus/mobile"]
-server = ["dioxus/server"]
+server = ["dioxus/server", "dep:tokio"]
 
 [profile]
 
