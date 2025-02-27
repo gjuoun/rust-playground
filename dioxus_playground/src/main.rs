@@ -63,6 +63,11 @@ fn DogApp() -> Element {
             .message
     });
 
+    let time_now = use_hook(|| {
+        // return current timestamp
+        chrono::Utc::now().format("%Y-%m-%d %H:%M:%S").to_string()
+    });
+
     // Event handlers for other buttons (currently just logging)
     let skip = move |_| {
         tracing::info!("Skip button clicked");
@@ -76,6 +81,7 @@ fn DogApp() -> Element {
         div { id: "dogview",
             img { src: img_src.cloned().unwrap_or_default(), id: "dog" }
         }
+        p { "{time_now}" }
         button { id: "fetch", onclick: move |_| img_src.restart(), "fetch me!!!" }
         div { id: "buttons",
             button { id: "skip", onclick: skip, "skip" }
