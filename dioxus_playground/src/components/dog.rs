@@ -24,7 +24,7 @@ thread_local! {
 }
 #[server]
 async fn save_dog2(image: String) -> Result<(), ServerFnError> {
-    DB.with(|f| f.execute("INSERT INTO dogs (url) VALUES (?1)", &[&image]))?;
+    DB.with(|connection| connection.execute("INSERT INTO dogs (url) VALUES (?1)", &[&image]))?;
     Ok(())
 }
 

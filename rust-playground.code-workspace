@@ -43,6 +43,15 @@
 			"activityBarBadge.foreground": "#e7e7e7"
 		},
 		"peacock.color": "#42b883",
+
+		// rust-analyzer settings for dioxus
+		"rust-analyzer.cargo.features": [
+			"server"
+		],
+		"rust-analyzer.check.extraArgs": [
+			"--features",
+			"server"
+		],
 	},
 	"launch": {
 		"version": "0.2.0",
@@ -55,6 +64,5 @@
 			"tamasfe.even-better-toml",
 			"vadimcn.vscode-lldb"
 		],
-
 	}
 }
