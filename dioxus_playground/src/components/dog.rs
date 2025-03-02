@@ -2,6 +2,7 @@ use anyhow::{Context, Result};
 use dioxus::{logger::tracing, prelude::*};
 use serde::Deserialize;
 
+
 //region server function
 // Expose a `save_dog` endpoint on our server that takes an "image" parameter
 #[server]
