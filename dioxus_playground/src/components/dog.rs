@@ -2,8 +2,32 @@ use anyhow::{Context, Result};
 use dioxus::{logger::tracing, prelude::*};
 use serde::Deserialize;
 
-
 //region server function
+// The database is only available to server code
+#[cfg(feature = "server")]
+thread_local! {
+    pub static DB: rusqlite::Connection = {
+        // Open the database from the persisted "hotdog.db" file
+        let conn = rusqlite::Connection::open("hotdog.db").expect("Failed to open database");
+
+        // Create the "dogs" table if it doesn't already exist
+        conn.execute_batch(
+            "CREATE TABLE IF NOT EXISTS dogs (
+                id INTEGER PRIMARY KEY,
+                url TEXT NOT NULL
+            );",
+        ).unwrap();
+
+        // Return the connection
+        conn
+    };
+}
+#[server]
+async fn save_dog2(image: String) -> Result<(), ServerFnError> {
+    DB.with(|f| f.execute("INSERT INTO dogs (url) VALUES (?1)", &[&image]))?;
+    Ok(())
+}
+
 // Expose a `save_dog` endpoint on our server that takes an "image" parameter
 #[server]
 async fn save_dog(image: String) -> Result<(), ServerFnError> {
@@ -19,7 +43,7 @@ async fn save_dog(image: String) -> Result<(), ServerFnError> {
 
     // And then write a newline to it with the image url
     file.write_fmt(format_args!("{image}\n"));
-
+    tracing::info!("Server: Saving dog image to file");
     Ok(())
 }
 
@@ -49,16 +73,24 @@ pub fn DogApp() -> Element {
         chrono::Utc::now().format("%Y-%m-%d %H:%M:%S").to_string()
     });
 
-    // Event handlers for buttons
-    let skip = move |_| {
+    // Create a reusable async function
+    async fn fetch_and_save(img_src: &mut Resource<String>, skip_save: bool) {
+        let current = img_src.cloned().unwrap();
+        img_src.restart();
+        if !skip_save {
+            _ = save_dog2(current).await;
+        }
+    }
+
+    // Use it in both handlers
+    let skip = move |_| async move {
         tracing::info!("Skip button clicked");
+        fetch_and_save(&mut img_src, true).await;
     };
 
     let save = move |_| async move {
         tracing::info!("Save button clicked");
-        let current = img_src.cloned().unwrap();
-        img_src.restart();
-        _ = save_dog(current).await;
+        fetch_and_save(&mut img_src, false).await;
     };
 
     rsx! {
