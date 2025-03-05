@@ -1,4 +1,4 @@
-use anyhow::{Context, Result};
+use anyhow::Result;
 use dioxus::{logger::tracing, prelude::*};
 use serde::Deserialize;
 
@@ -42,7 +42,7 @@ async fn save_dog(image: String) -> Result<(), ServerFnError> {
         .unwrap();
 
     // And then write a newline to it with the image url
-    file.write_fmt(format_args!("{image}\n"));
+    file.write_fmt(format_args!("{image}\n"))?;
     tracing::info!("Server: Saving dog image to file");
     Ok(())
 }
@@ -102,6 +102,15 @@ pub fn DogApp() -> Element {
         div { id: "buttons",
             button { id: "skip", onclick: skip, "skip" }
             button { id: "save", onclick: save, "save!" }
+        }
+    }
+}
+
+#[component]
+pub fn DogView() -> Element {
+    rsx! {
+        div {
+            h1 { "Dog View" }
         }
     }
 }
