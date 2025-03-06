@@ -1,10 +1,15 @@
 use dioxus::prelude::*;
 
 #[cfg(feature = "server")]
-use crate::components::dog::DB;
+use crate::config::db_server::DB;
 
-// Query the database and return the last 10 dogs and their url
-#[server] // what is this? ai?
+#[server]
+pub async fn save_dog(image: String) -> Result<(), ServerFnError> {
+    DB.with(|connection| connection.execute("INSERT INTO dogs (url) VALUES (?1)", &[&image]))?;
+    Ok(())
+}
+
+#[server]
 pub async fn list_dogs() -> Result<Vec<(usize, String)>, ServerFnError> {
     let dogs = DB.with(|f| {
         f.prepare("SELECT id, url FROM dogs ORDER BY id DESC LIMIT 10")
@@ -16,9 +21,4 @@ pub async fn list_dogs() -> Result<Vec<(usize, String)>, ServerFnError> {
     });
 
     Ok(dogs)
-}
-
-#[component]
-pub fn Favorites() -> Element {
-    rsx! { "favorites!" }
 }
