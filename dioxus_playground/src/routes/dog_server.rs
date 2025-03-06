@@ -1,3 +1,4 @@
+use crate::models::dog::Dog;
 use dioxus::prelude::*;
 
 #[cfg(feature = "server")]
@@ -10,15 +11,18 @@ pub async fn save_dog(image: String) -> Result<(), ServerFnError> {
 }
 
 #[server]
-pub async fn list_dogs() -> Result<Vec<(usize, String)>, ServerFnError> {
-    let dogs = DB.with(|f| {
+pub async fn list_dogs() -> Result<Vec<Dog>, ServerFnError> {
+    let rows = DB.with(|f| {
         f.prepare("SELECT id, url FROM dogs ORDER BY id DESC LIMIT 10")
             .unwrap()
             .query_map([], |row| Ok((row.get(0)?, row.get(1)?)))
             .unwrap()
             .map(|r| r.unwrap())
-            .collect()
+            .collect::<Vec<(usize, String)>>()
     });
+
+    // Convert database rows to Dog models
+    let dogs = rows.into_iter().map(Dog::from_row).collect();
 
     Ok(dogs)
 }

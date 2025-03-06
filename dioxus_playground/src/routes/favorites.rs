@@ -1,47 +1,59 @@
+use crate::models::dog::Dog;
+use crate::routes::favorites_server::{list_favourite_dogs, remove_dog};
+use dioxus::logger::tracing;
 use dioxus::prelude::*;
-
-#[cfg(feature = "server")]
-use crate::config::db_server::DB;
-
-// Server function for favorites
-#[server]
-pub async fn list_favourite_dogs() -> Result<Vec<(usize, String)>, ServerFnError> {
-    let dogs = DB.with(|conn| {
-        conn.prepare("SELECT id, url FROM dogs ORDER BY id DESC")
-            .unwrap()
-            .query_map([], |row| Ok((row.get(0)?, row.get(1)?)))
-            .unwrap()
-            .map(|r| r.unwrap())
-            .collect()
-    });
-
-    Ok(dogs)
-}
 
 #[component]
 pub fn FavoritesView() -> Element {
-    // Use the favorites-specific server function
+    // Use a signal to track when to refresh
+    let mut refresh_count = use_signal(|| 0);
+
+    // Use resource with the refresh count as a dependency
     let dogs = use_resource(|| async move { list_favourite_dogs().await.unwrap_or_default() });
+
+    // Handler for removing a dog
+    let remove_handler = move |id: usize| {
+        let refresh = refresh_count.clone();
+        async move {
+            if let Err(e) = remove_dog(id).await {
+                tracing::error!("Failed to remove dog: {}", e);
+            }
+            // Increment to trigger refresh
+            refresh_count += 1;
+        }
+    };
 
     rsx! {
       div { class: "favorites-container",
         h2 { "Favorite Dogs" }
-        if let Some(dog_list) = dogs.read().as_ref() {
-          if dog_list.is_empty() {
-            p { "No dogs found in the database." }
-          } else {
-            div { class: "dog-grid",
-              for (id , url) in dog_list {
-                div { class: "dog-card",
-                  img { src: "{url}", alt: "Dog {id}" }
-                  p { "Dog ID: {id}" }
+        {
+            match dogs.clone().read_unchecked().as_ref() {
+                Some(dog_list) => {
+                    if dog_list.is_empty() {
+                        rsx! {
+                          p { "No dogs found in the database." }
+                        }
+                    } else {
+                        rsx! {
+                          div { class: "dog-grid",
+                            for dog in dog_list {
+                              div { class: "dog-card",
+                                img { src: "{dog.url}", alt: "Dog {dog.id}" }
+                                p { "Dog ID: {dog.id}" }
+                                button { class: "remove-btn", onclick: move |_| remove_handler(dog.id), "Remove" }
+                              }
+                            }
+                          }
+                        }
+                    }
                 }
-              }
+                None => rsx! {
+                  p { "Loading dogs..." }
+                },
             }
-          }
-        } else {
-          p { "Loading dogs..." }
         }
+        // Hidden element that forces re-render when refresh_count changes
+        div { style: "display: none", "{refresh_count}" }
       }
     }
 }

@@ -1,5 +1,6 @@
 mod components;
 mod config;
+mod models;
 mod route;
 mod routes;
 
