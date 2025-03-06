@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 use crate::components::dog::DB;
 
 // Query the database and return the last 10 dogs and their url
-#[server]
+#[server] // what is this? ai?
 pub async fn list_dogs() -> Result<Vec<(usize, String)>, ServerFnError> {
     let dogs = DB.with(|f| {
         f.prepare("SELECT id, url FROM dogs ORDER BY id DESC LIMIT 10")

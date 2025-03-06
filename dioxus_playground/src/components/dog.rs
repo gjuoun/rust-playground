@@ -23,29 +23,29 @@ thread_local! {
     };
 }
 #[server]
-async fn save_dog2(image: String) -> Result<(), ServerFnError> {
+async fn save_dog(image: String) -> Result<(), ServerFnError> {
     DB.with(|connection| connection.execute("INSERT INTO dogs (url) VALUES (?1)", &[&image]))?;
     Ok(())
 }
 
 // Expose a `save_dog` endpoint on our server that takes an "image" parameter
-#[server]
-async fn save_dog(image: String) -> Result<(), ServerFnError> {
-    use std::io::Write;
+// #[server]
+// async fn save_dog(image: String) -> Result<(), ServerFnError> {
+//     use std::io::Write;
 
-    // Open the `dogs.txt` file in append-only mode, creating it if it doesn't exist;
-    let mut file = std::fs::OpenOptions::new()
-        .write(true)
-        .append(true)
-        .create(true)
-        .open("dogs.txt")
-        .unwrap();
+//     // Open the `dogs.txt` file in append-only mode, creating it if it doesn't exist;
+//     let mut file = std::fs::OpenOptions::new()
+//         .write(true)
+//         .append(true)
+//         .create(true)
+//         .open("dogs.txt")
+//         .unwrap();
 
-    // And then write a newline to it with the image url
-    file.write_fmt(format_args!("{image}\n"))?;
-    tracing::info!("Server: Saving dog image to file");
-    Ok(())
-}
+//     // And then write a newline to it with the image url
+//     file.write_fmt(format_args!("{image}\n"))?;
+//     tracing::info!("Server: Saving dog image to file");
+//     Ok(())
+// }
 
 //endregion server function
 
@@ -78,7 +78,7 @@ pub fn DogApp() -> Element {
         let current = img_src.cloned().unwrap();
         img_src.restart();
         if !skip_save {
-            _ = save_dog2(current).await;
+            _ = save_dog(current).await;
         }
     }
 
