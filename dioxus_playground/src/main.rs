@@ -53,9 +53,10 @@ pub fn DogView() -> Element {
 #[component]
 pub fn App() -> Element {
     rsx! {
+
         document::Link { rel: "icon", href: FAVICON }
         document::Link { rel: "stylesheet", href: MAIN_CSS }
-
+        document::Script { src: "/path/to/your-script.js", r#async: true }
         Router::<Route> {}
     }
 }

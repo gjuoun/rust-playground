@@ -1,5 +1,8 @@
 use dioxus::prelude::*;
 
+#[cfg(feature = "server")]
+use crate::components::dog::DB;
+
 // Query the database and return the last 10 dogs and their url
 #[server]
 pub async fn list_dogs() -> Result<Vec<(usize, String)>, ServerFnError> {
