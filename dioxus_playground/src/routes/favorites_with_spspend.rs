@@ -9,7 +9,7 @@ pub fn FavoritesViewWithSuspend() -> Element {
         div { class: "favorites-container",
             h3 { "Recently Saved Dogs" }
             div { id: "favorites-container",
-                let dogs = favorites.read();
+                let dogs = favorites.read(); // dogs is always a Vec<Dog>, do not detect empty, ai!
                 if dogs.is_empty() {
                     rsx! {
                         p { "No favorite dogs found." }
