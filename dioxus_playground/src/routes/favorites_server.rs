@@ -1,5 +1,6 @@
 use crate::models::dog::Dog;
 use dioxus::prelude::*;
+#[cfg(feature = "server")]
 use tokio::time::{sleep, Duration};
 
 #[cfg(feature = "server")]

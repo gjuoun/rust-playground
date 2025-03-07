@@ -4,9 +4,9 @@ use dioxus::prelude::*;
 
 #[component]
 pub fn FavoritesView() -> Element {
-    let mut favorites = use_resource(|| async move { list_favourite_dogs().await.unwrap_or_default() });
+    let mut favorites =
+        use_resource(|| async move { list_favourite_dogs().await.unwrap_or_default() });
 
-    // why this function doesn't work? ai?
     let handle_dog_removal2 = {
         move |dog_id: usize| async move {
             tracing::info!("id to remove: {}", dog_id);

@@ -19,6 +19,9 @@ pub fn NavBar() -> Element {
             Link { to: Route::FavoritesView {},
               div { class: "nav-item", "Favorites" }
             }
+            Link { to: Route::FavoritesViewWithSuspend {},
+              div { class: "nav-item", "FavoritesWithSuspend" }
+            }
           }
         }
       }

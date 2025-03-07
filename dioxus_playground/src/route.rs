@@ -1,9 +1,9 @@
 use crate::components::navbar::NavBar;
 use crate::routes::dog::DogView;
 use crate::routes::favorites::FavoritesView;
+use crate::routes::favorites_with_spspend::FavoritesViewWithSuspend;
 use crate::routes::root::Root;
 use dioxus::prelude::*;
-use dioxus_router::prelude::*;
 
 #[derive(Routable, Clone, PartialEq)]
 pub enum Route {
@@ -13,6 +13,9 @@ pub enum Route {
 
     #[route("/favorites")]
     FavoritesView,
+
+    #[route("/favorites-with-suspend")]
+    FavoritesViewWithSuspend,
 
     #[route("/dog")]
     DogView,
