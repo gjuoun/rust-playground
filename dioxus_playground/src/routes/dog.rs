@@ -28,9 +28,8 @@ pub fn DogView() -> Element {
         chrono::Utc::now().format("%Y-%m-%d %H:%M:%S").to_string()
     });
 
-    // Use it in both handlers
     let skip = {
-        move |_| async move {
+        move |_| {
             img_src.restart();
         }
     };
