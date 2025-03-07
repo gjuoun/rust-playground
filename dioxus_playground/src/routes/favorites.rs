@@ -16,29 +16,30 @@ pub fn FavoritesView() -> Element {
     rsx! {
       div { class: "favorites-container",
         h3 { "Recently Saved Dogs" }
-        // Show the error message if there is one
-        {}
         {
             match dogs.read().as_ref() {
-                Some(dogs) => {
-                    if dogs.is_empty() {
+                Some(_dogs) => {
+                    if _dogs.is_empty() {
                         rsx! {
                           p { "No saved dogs yet." }
                         }
                     } else {
                         rsx! {
                           div { class: "dog-grid",
-                            for dog in dogs.iter().cloned() {
+                            for _dog in _dogs.iter().cloned() {
                               div { class: "dog-card",
-                                img { src: "{dog.url}", alt: "Dog {dog.id}" }
-                                p { "Dog ID: {dog.id}" }
+                                img { src: "{_dog.url}", alt: "Dog {_dog.id}" }
+                                p { "Dog ID: {_dog.id}" }
                                 button {
                                   class: "remove-button",
                                   onclick: move |_| {
                                       to_owned![refresh_count, removal_error];
                                       async move {
-                                          match remove_dog(dog.id).await {
-                                              Ok(_) => refresh_count += 1,
+                                          match remove_dog(_dog.id).await {
+                                              Ok(_) =>{
+                                                refresh_count += 1;
+                                                dogs.restart();
+                                              }
                                               Err(e) => {
                                                   tracing::error!("Failed to remove dog: {}", e);
                                                   removal_error.set(Some(format!("Failed to remove dog: {}", e)));
