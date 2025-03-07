@@ -11,44 +11,35 @@ pub fn FavoritesView() -> Element {
     // Use resource with the refresh count as a dependency
     let mut dogs = use_resource(|| async move { list_favourite_dogs().await.unwrap_or_default() });
 
-    // Handler for removing a dog
-    let remove_handler = move |id: usize| {
-        let refresh = refresh_count.clone();
-        async move {
-            if let Err(e) = remove_dog(id).await {
-                tracing::error!("Failed to remove dog: {}", e);
-            }
-            // Increment to trigger refresh
-            refresh_count += 1;
-        }
-    };
-
-    match &*dogs.read_unchecked() {
-        Some(dog_list) => {
-            rsx! {
-              div { class: "favorites-container",
-                h2 { "Favorite Dogs" }
-                for dog in dog_list {
-                  div { class: "dog-card",
-                    img {
-                      src: "{dog.url}",
-                      alt: "Dog {dog.id}",
+    rsx! {
+      div { class: "favorites-container",
+        h3 { "Recently Saved Dogs" }
+        {
+            match dogs.read().as_ref() {
+                Some(dogs) => {
+                    if dogs.is_empty() {
+                        rsx! {
+                          p { "No saved dogs yet." }
+                        }
+                    } else {
+                        rsx! {
+                          div { class: "dog-grid",
+                            for dog in dogs {
+                              div { class: "dog-card",
+                                img { src: "{dog.url}", alt: "Dog {dog.id}" }
+                                p { "Dog ID: {dog.id}" }
+                                  // please add a "X" button to remove the dog, ai!
+                              }
+                            }
+                          }
+                        }
                     }
-                  }
                 }
-              }
+                None => rsx! {
+                  p { "Loading saved dogs..." }
+                },
             }
         }
-        None => rsx! {
-          p { "Loading dogs..." }
-        },
+      }
     }
-    // rsx! {
-    //   div { class: "favorites-container",
-    //     h2 { "Favorite Dogs" }
-    //     {}
-    //     // Hidden element that forces re-render when refresh_count changes
-    //     div { style: "display: none", "{refresh_count}" }
-    //   }
-    // }
 }
