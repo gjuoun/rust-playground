@@ -24,10 +24,11 @@ dx serve # serve default feauture (web)
 dx serve --platform web # ["desktop", "mobile" ]
 ```
 
-To run for a different platform, use the `--platform platform` flag. E.g.
-```bash
-dx serve --platform desktop
-```
 
+# Build 
+
+```bash
+dx bundle --platform web   
+```
 
 
