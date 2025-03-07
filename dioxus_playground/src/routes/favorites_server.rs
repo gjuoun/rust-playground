@@ -1,5 +1,7 @@
 use crate::models::dog::Dog;
 use dioxus::prelude::*;
+#[cfg(feature = "server")]
+use tokio::time::{sleep, Duration};
 
 #[cfg(feature = "server")]
 use crate::config::db_server::DB;
@@ -7,6 +9,9 @@ use crate::config::db_server::DB;
 // Server function to list dogs
 #[server]
 pub async fn list_favourite_dogs() -> Result<Vec<Dog>, ServerFnError> {
+    // please sleep for 2 seconds here,  ai!
+    sleep(Duration::from_secs(2)).await;
+
     let dogs = DB.with(|conn| {
         conn.prepare("SELECT id, url FROM dogs ORDER BY id DESC")
             .unwrap()
