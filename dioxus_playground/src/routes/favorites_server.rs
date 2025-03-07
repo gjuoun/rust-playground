@@ -7,17 +7,17 @@ use crate::config::db_server::DB;
 // Server function to list dogs
 #[server]
 pub async fn list_favourite_dogs() -> Result<Vec<Dog>, ServerFnError> {
-    let rows = DB.with(|conn| {
+    let dogs = DB.with(|conn| {
         conn.prepare("SELECT id, url FROM dogs ORDER BY id DESC")
             .unwrap()
-            .query_map([], |row| Ok((row.get(0)?, row.get(1)?)))
+            .query_map([], |row| {
+                let id: usize = row.get(0)?;
+                let url: String = row.get(1)?;
+                Ok(Dog::new(id, url))
+            })
             .unwrap()
-            .map(|r| r.unwrap())
-            .collect::<Vec<(usize, String)>>()
-    });
-
-    // Convert database rows to Dog models
-    let dogs = rows.into_iter().map(Dog::from_row).collect();
+            .collect::<Result<Vec<Dog>, _>>()
+    })?;
 
     Ok(dogs)
 }
