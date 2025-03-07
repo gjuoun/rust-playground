@@ -14,12 +14,12 @@ pub fn DogView() -> Element {
     // State for the dog image URL using use_resource
     let mut img_src = use_resource(|| async move {
         reqwest::get("https://dog.ceo/api/breeds/image/random")
-          .await
-          .unwrap()
-          .json::<DogApi>()
-          .await
-          .unwrap()
-          .message
+            .await
+            .unwrap()
+            .json::<DogApi>()
+            .await
+            .unwrap()
+            .message
     });
 
     // Using use_hook for timestamp
@@ -27,15 +27,6 @@ pub fn DogView() -> Element {
         // return current timestamp
         chrono::Utc::now().format("%Y-%m-%d %H:%M:%S").to_string()
     });
-
-    // Create a reusable async function
-    async fn fetch_and_save(img_src: String, skip_save: bool) {
-        let current = img_src.clone();
-
-        if!skip_save {
-            save_dog(current).await;
-        }
-    }
 
     // Use it in both handlers
     let skip = {
@@ -46,9 +37,9 @@ pub fn DogView() -> Element {
 
     let save = {
         move |_| async move {
-            if let Some(src) = img_src.read().cloned() {
-                fetch_and_save(src, false).await;
-            }
+            let current = img_src.cloned().unwrap_or_default();
+            img_src.restart();
+            let _ = save_dog(current).await;
         }
     };
 
@@ -60,7 +51,6 @@ pub fn DogView() -> Element {
         }
         div { "Current time: {time_now}" }
         div { class: "button-group",
-          button { id: "fetch", onclick: move |_| img_src.restart(), "Fetch New Dog" }
           button { id: "skip", onclick: skip, "Skip" }
           button { id: "save", onclick: save, "Save" }
         }
