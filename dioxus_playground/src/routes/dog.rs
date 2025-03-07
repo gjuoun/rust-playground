@@ -14,12 +14,12 @@ pub fn DogView() -> Element {
     // State for the dog image URL using use_resource
     let mut img_src = use_resource(|| async move {
         reqwest::get("https://dog.ceo/api/breeds/image/random")
-            .await
-            .unwrap()
-            .json::<DogApi>()
-            .await
-            .unwrap()
-            .message
+          .await
+          .unwrap()
+          .json::<DogApi>()
+          .await
+          .unwrap()
+          .message
     });
 
     // Using use_hook for timestamp
@@ -32,26 +32,23 @@ pub fn DogView() -> Element {
     async fn fetch_and_save(img_src: String, skip_save: bool) {
         let current = img_src.clone();
 
-        if !skip_save {
+        if!skip_save {
             save_dog(current).await;
         }
     }
 
     // Use it in both handlers
     let skip = {
-        // let saved_dogs = saved_dogs.clone();
         move |_| async move {
-          // fix this function, it should refresh the image only, ai!
-          let current = img_src.read().clone();
             img_src.restart();
-            fetch_and_save(&mut img_src, &mut saved_dogs, true).await;
         }
     };
 
     let save = {
-        // let saved_dogs = saved_dogs.clone();
         move |_| async move {
-            fetch_and_save(&mut img_src, &mut saved_dogs, false).await;
+            if let Some(src) = img_src.read().cloned() {
+                fetch_and_save(src, false).await;
+            }
         }
     };
 
