@@ -33,6 +33,7 @@ pub fn FavoritesView() -> Element {
                                 button {
                                   class: "remove-button",
                                   onclick: move |_| {
+                                    // move this to a separate function in the component, ai!
                                       to_owned![refresh_count, removal_error];
                                       async move {
                                           match remove_dog(_dog.id).await {
