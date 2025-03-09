@@ -22,6 +22,8 @@ pub fn FavoritesView() -> Element {
         }
     };
 
+    
+
     rsx! {
       div { class: "favorites-container",
         h3 { "Recently Saved Dogs" }
