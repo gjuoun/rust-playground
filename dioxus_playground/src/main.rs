@@ -1,6 +1,6 @@
 mod components;
 mod config;
-mod models;
+mod dogs;
 mod route;
 mod routes;
 
@@ -21,5 +21,11 @@ pub fn App() -> Element {
 }
 
 fn main() {
+    // getting PORT and HOST, print message before starting server
+    let port = std::env::var("PORT").unwrap_or_else(|_| "8080".to_string());
+    let host = std::env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
+
+    println!("Starting server at http://{}:{}", host, port);
+
     dioxus::launch(App);
 }

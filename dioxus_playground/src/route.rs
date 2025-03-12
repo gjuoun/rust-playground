@@ -1,7 +1,7 @@
 use crate::components::navbar::NavBar;
-use crate::routes::dog::DogView;
-use crate::routes::favorites::FavoritesView;
-use crate::routes::favorites_with_spspend::FavoritesViewWithSuspend;
+use crate::dogs::dog_view::DogView;
+use crate::dogs::favorites_view::FavoritesView;
+use crate::dogs::favorites_with_spspend_view::FavoritesViewWithSuspend;
 use crate::routes::root::Root;
 use dioxus::prelude::*;
 
