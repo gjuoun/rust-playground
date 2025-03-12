@@ -1,4 +1,4 @@
-use crate::routes::favorites_server::list_favourite_dogs;
+use super::favorites_server::list_favourite_dogs;
 use dioxus::prelude::*;
 
 #[component]

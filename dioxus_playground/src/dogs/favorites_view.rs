@@ -1,4 +1,4 @@
-use crate::routes::favorites_server::{list_favourite_dogs, remove_dog};
+use super::favorites_server::{list_favourite_dogs, remove_dog};
 use dioxus::logger::tracing;
 use dioxus::prelude::*;
 
@@ -21,8 +21,6 @@ pub fn FavoritesView() -> Element {
             }
         }
     };
-
-    
 
     rsx! {
       div { class: "favorites-container",

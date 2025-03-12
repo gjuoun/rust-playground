@@ -1,4 +1,4 @@
-use crate::models::dog::Dog;
+use super::dog_model::Dog;
 use dioxus::prelude::*;
 #[cfg(feature = "server")]
 use tokio::time::{sleep, Duration};

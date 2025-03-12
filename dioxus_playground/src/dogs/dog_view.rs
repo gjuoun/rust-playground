@@ -1,6 +1,4 @@
-use crate::models::dog::Dog;
-use crate::routes::dog_server::{list_dogs, save_dog};
-use dioxus::logger::tracing;
+use super::dog_server::save_dog;
 use dioxus::prelude::*;
 use serde::Deserialize;
 
