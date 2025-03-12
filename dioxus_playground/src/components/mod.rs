@@ -1,1 +1,1 @@
-pub mod navbar;
+pub mod NavBar;

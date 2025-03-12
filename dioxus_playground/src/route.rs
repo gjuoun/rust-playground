@@ -1,4 +1,4 @@
-use crate::components::navbar::NavBar;
+use crate::components::NavBar::NavBar;
 use crate::dogs::dog_view::DogView;
 use crate::dogs::favorites_view::FavoritesView;
 use crate::dogs::favorites_with_spspend_view::FavoritesViewWithSuspend;
